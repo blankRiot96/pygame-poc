@@ -39,31 +39,16 @@ class Particle:
         self.color = color
 
         # Kinematic variables
+        self.target_pos = self.pos + pygame.Vector2(
+            math.cos(self.radians) * self.radius, math.sin(self.radians) * self.radius
+        )
         self.acc_dt = 0.0  # Accumalated delta time
         self.s1 = self.s2 = 0.0  # Distance travelled
+        self.distance = 0.0
         self.speed = 0.0
-        # self.acceleration = (-(self.initial_velocity**2)) / (2 * self.radius)
-        # self.acceleration = -300
-        # self.initial_velocity = -self.acceleration * seconds
 
-        # # Calculate angular displacement
-        # angular_displacement = self.radians
-
-        # # Calculate angular velocity
-        # angular_velocity = angular_displacement / self.seconds
-
-        # # Calculate linear velocity
-        # self.initial_velocity = angular_velocity * self.radius
-
-        # # Calculate acceleration
-        # self.acceleration = -self.initial_velocity / self.seconds
-
-        # self.speed = self.radius / self.seconds
-        # height = self.points[3].distance_to(self.points[0])
-
-        self.initial_velocity = self.radius / self.seconds
+        self.initial_velocity = (2 * self.radius) / self.seconds
         self.acceleration = -self.initial_velocity / self.seconds
-        self.initial_size = size
 
         # Rendering attributes
         self.delta = pygame.Vector2()
@@ -76,20 +61,20 @@ class Particle:
 
         return cls(
             pos=pos,
-            seconds=random.uniform(0.2, 0.5),
-            radius=random.uniform(2, 5),
+            seconds=random.uniform(0.1, 0.4),
+            radius=random.uniform(100, 150),
             radians=radians,
-            size=1.0,
+            size=1.5,
         )
 
     def create_points(self):
         self.points = [
-            self.pos + self.delta,
-            self.pos + self.get_delta(self.radians + RIGHT_ANGLE) * 0.6,
-            self.pos - self.delta * 7,
+            self.pos + self.get_delta(self.radians),
+            self.pos + self.get_delta(self.radians + RIGHT_ANGLE) * 0.3,
+            self.pos - self.get_delta(self.radians) * 3.5,
             pygame.Vector2(
-                self.pos.x + self.get_delta(self.radians - RIGHT_ANGLE).x * 0.6,
-                self.pos.y - self.get_delta(self.radians + RIGHT_ANGLE).y * 0.6,
+                self.pos.x + self.get_delta(self.radians - RIGHT_ANGLE).x * 0.3,
+                self.pos.y - self.get_delta(self.radians + RIGHT_ANGLE).y * 0.3,
             ),
         ]
 
@@ -105,34 +90,19 @@ class Particle:
         self.alive = False
 
     def update(self):
-        """
-        (kinematics)
-        v = u + at
-        u = v - at
-        v = 0
-        u = -at
+        """(kinematics)
+        s = ut + (1/2)a(t^2)
         """
 
         self.acc_dt += shared.dt
-
-        """
-        (kinematics)
-        s = ut + (1/2)at^2
-        """
         self.s1 = (self.initial_velocity * self.acc_dt) + (
             0.5 * self.acceleration * (self.acc_dt**2)
         )
-
-        """
-        (kinematics)
-        v = ds/dt
-        """
-        self.speed = (self.s1 - self.s2) / shared.dt
+        self.speed = self.s1 - self.s2
 
         # Updating attributes
-        self.delta = self.get_delta(self.radians)
+        self.pos.move_towards_ip(self.target_pos, self.speed)
         self.create_points()
-        self.pos += self.delta
         self.on_death()
 
         self.s2 = self.s1
@@ -150,8 +120,8 @@ class Spark:
         self.alive = True
 
     def update(self):
-        self.alive = all(particle.alive for particle in self.particles)
         entities_updater(self.particles)
+        self.alive = bool(self.particles)
 
     def draw(self):
         entities_renderer(self.particles)

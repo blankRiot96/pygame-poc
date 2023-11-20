@@ -8,6 +8,7 @@ clock = pygame.Clock()
 
 sparks = SparkSpawner()
 
+
 while True:
     shared.dt = clock.tick(60) / 1000
     shared.events = pygame.event.get()
