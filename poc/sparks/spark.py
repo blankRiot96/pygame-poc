@@ -125,42 +125,35 @@ class Spark:
 
     def draw(self):
         entities_renderer(self.particles)
-        # pygame.draw.circle(shared.win, "red", self.center, self.radius, width=1)
 
 
 class ShockWave:
     def __init__(
         self,
         pos: Pos,
-        opening_speed: float,
-        width: float,
-        thinning_speed: float,
+        duration: float,
+        max_radius: float,
+        starting_width: float,
         color: ColorValue = COLOR,
     ) -> None:
-        self.pos = pos
-        self.opening_speed = opening_speed
-        self.width = width
-        self.thinning_speed = thinning_speed
-        self.color = color
+        self.pos = pygame.Vector2(pos)
+        self.duration = duration
+        self.max_radius = max_radius
+        self.max_width = starting_width
+
         self.radius = 0
+        self.width = self.max_width
+        self.color = color
         self.alive = True
+        self.acc_dt = 0.0
 
     def update(self):
         self.alive = self.width > 0
-        self.width -= self.thinning_speed
-        self.radius += self.opening_speed
+        self.acc_dt += shared.dt
 
-        denom_2 = 0.001
-        if self.thinning_speed > denom_2:
-            self.thinning_speed -= denom_2
-        else:
-            self.thinning_speed = denom_2
-
-        denominator = 1
-        if self.opening_speed > denominator:
-            self.opening_speed -= denominator
-        else:
-            self.opening_speed = denominator
+        time_ratio = self.acc_dt / self.duration
+        self.radius = self.max_radius * time_ratio
+        self.width = self.max_width * (1 - time_ratio)
 
     def draw(self):
         if int(self.width) <= 0:
@@ -179,10 +172,10 @@ class SparkSpawner:
         self.sparks.append(Spark(pygame.mouse.get_pos(), density=15))
         self.shockwaves.append(
             ShockWave(
-                pygame.mouse.get_pos(),
-                opening_speed=15,
-                width=15,
-                thinning_speed=0.9,
+                pos=pygame.mouse.get_pos(),
+                duration=0.15,
+                max_radius=100,
+                starting_width=20,
             )
         )
 
