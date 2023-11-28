@@ -19,10 +19,16 @@ class Shader:
     textures = []
 
     def __init__(self, vert_shader_name: str, frag_shader_name: str) -> None:
-        self.ctx = moderngl.create_context()
+        self.load_ctx()
         self.load_quad()
         self.load_program(vert_shader_name, frag_shader_name)
         self.load_render_obj()
+
+    def load_ctx(self):
+        self.ctx = moderngl.create_context()
+        # self.ctx.enable(moderngl.BLEND)
+
+        # self.ctx.blend_func = moderngl.SRC_ALPHA, moderngl.ONE_MINUS_SRC_ALPHA
 
     def pass_surf_to_gl(self, surf: t.Optional[pygame.Surface]):
         if surf is None:
@@ -66,4 +72,7 @@ class Shader:
             self.safe_assign(key, value)
 
     def render(self):
+        self.ctx.enable(moderngl.BLEND)
+        self.ctx.blend_func = moderngl.SRC_ALPHA, moderngl.ONE_MINUS_SRC_ALPHA
+
         self.render_obj.render(mode=moderngl.TRIANGLE_STRIP)
