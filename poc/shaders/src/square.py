@@ -4,11 +4,12 @@ from src import shared
 
 class Square:
     def __init__(self) -> None:
-        self.surf = pygame.Surface((50, 50))
+        self.surf = pygame.Surface((50, 50), pygame.SRCALPHA)
         self.surf.fill("red")
-        self.surf.set_alpha(50)
+        self.surf.set_alpha(150)
         self.pos = pygame.Vector2(250, 250)
         self.speed = 200
+        self.once = True
 
     def update(self):
         x, y = 0, 0
@@ -22,7 +23,9 @@ class Square:
             x = 1
 
         self.pos += pygame.Vector2(x, y) * self.speed * shared.dt
-        print(self.pos)
 
     def render(self):
         shared.win.blit(self.surf, self.pos)
+        if self.once:
+            pygame.image.save(shared.win, "output.png")
+            self.once = False

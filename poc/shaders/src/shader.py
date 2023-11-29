@@ -16,31 +16,42 @@ def load_shader(name: str) -> str:
 class Shader:
     """Handles the OpenGL Pipeline"""
 
-    textures = []
+    textures_formed = 0
 
     def __init__(self, vert_shader_name: str, frag_shader_name: str) -> None:
         self.load_ctx()
         self.load_quad()
         self.load_program(vert_shader_name, frag_shader_name)
         self.load_render_obj()
+        self.tex: moderngl.Texture | None = None
+        self.tex_pos: int = 0
 
     def load_ctx(self):
         self.ctx = moderngl.create_context()
-        # self.ctx.enable(moderngl.BLEND)
+        self.ctx.enable(moderngl.BLEND)
 
-        # self.ctx.blend_func = moderngl.SRC_ALPHA, moderngl.ONE_MINUS_SRC_ALPHA
+        self.ctx.blend_func = moderngl.SRC_ALPHA, moderngl.ONE_MINUS_SRC_ALPHA
+
+    def get_tex(self, surf: pygame.Surface) -> moderngl.Texture:
+        if self.tex is not None:
+            return self.tex
+
+        tex = self.ctx.texture(surf.get_size(), 4)
+        tex.filter = (moderngl.NEAREST, moderngl.NEAREST)
+        tex.swizzle = "BGRA"
+        self.tex_pos = Shader.textures_formed
+        Shader.textures_formed += 1
+
+        return tex
 
     def pass_surf_to_gl(self, surf: t.Optional[pygame.Surface]):
         if surf is None:
             return
 
-        tex = self.ctx.texture(surf.get_size(), 4)
-        tex.filter = (moderngl.NEAREST, moderngl.NEAREST)
-        tex.swizzle = "BGRA"
-        tex.write(surf.get_view("1"))
-        Shader.textures.append(tex)
-        self.tex_pos = len(Shader.textures) - 1
-        tex.use(self.tex_pos)
+        self.tex = self.get_tex(surf)
+        self.tex.write(surf.get_view("1"))
+        self.tex.build_mipmaps()
+        self.tex.use(self.tex_pos)
 
         self.safe_assign("tex", self.tex_pos)
 
@@ -72,7 +83,6 @@ class Shader:
             self.safe_assign(key, value)
 
     def render(self):
-        self.ctx.enable(moderngl.BLEND)
-        self.ctx.blend_func = moderngl.SRC_ALPHA, moderngl.ONE_MINUS_SRC_ALPHA
-
         self.render_obj.render(mode=moderngl.TRIANGLE_STRIP)
+        # if self.tex is not None:
+        #     self.tex.release()
