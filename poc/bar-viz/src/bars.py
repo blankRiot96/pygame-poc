@@ -46,14 +46,13 @@ class BarVisualizer:
         self.n_bars = self.width / (self.bar_width + self.bar_space)
         self.timer = Time(self.update_cd)
 
-    def set_song(self, song: pygame.mixer.Sound, fade_ms: int) -> None:
+    def set_song(self, song: pygame.mixer.Sound) -> None:
         self.song = song
-        self.fade_ms = fade_ms
         self.arr = tone_down_values(pygame.sndarray.array(self.song), self.height)
         self.arr_size = len(self.arr)
 
-    def play(self):
-        self.song.play(fade_ms=self.fade_ms)
+    def play(self, fade_ms: int = 0):
+        self.song.play(fade_ms=fade_ms)
 
     def stop(self):
         self.song.stop()
@@ -63,7 +62,7 @@ class BarVisualizer:
         start_index = max(0, int(SAMPLE_RATE * (t - shared.dt)))
         end_index = min(
             self.arr_size,
-            int(SAMPLE_RATE * t),
+            int(SAMPLE_RATE * (t + shared.dt)),
         )
 
         self.data = np.abs(self.arr[start_index:end_index])
@@ -71,6 +70,12 @@ class BarVisualizer:
 
         mean = lambda bar: (float(bar[0]) + float(bar[1])) / 2
         self.bar_heights = [mean(bar) for bar in self.data[:: self.steps]]
+        self.bar_heights.sort(reverse=True)
+
+    def get_bar_color(self, bar_height: float):
+        ratio = bar_height / self.height
+        color = (25, 255 * ratio, 150 * (1 - ratio))
+        return color
 
     def create_surf(self):
         if self.data is None:
@@ -79,12 +84,13 @@ class BarVisualizer:
         self.surf = pygame.Surface(self.size, pygame.SRCALPHA)
 
         for i, bar_height in enumerate(self.bar_heights):
+            bar_height = abs(bar_height)
             r = pygame.Rect(0, self.height - bar_height, self.bar_width, bar_height)
             r.x = i * (self.bar_width + self.bar_space)
-            pygame.draw.rect(self.surf, "white", r)
+            pygame.draw.rect(self.surf, self.get_bar_color(bar_height), r)
 
             if bar_height > 2:
-                self.bar_heights[i] -= 10
+                self.bar_heights[i] -= 3.5
             else:
                 self.bar_heights[i] = 2
 

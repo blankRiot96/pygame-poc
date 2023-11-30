@@ -8,3 +8,4 @@ WRECT: pygame.Rect
 win: pygame.Surface
 events: list[pygame.Event]
 dt: float
+clock: pygame.Clock
