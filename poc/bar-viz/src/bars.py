@@ -5,6 +5,7 @@ from src.types_ import Size
 from src.utils import Time, render_at
 
 SAMPLE_RATE = 48_000
+pygame.mixer.pre_init(frequency=SAMPLE_RATE)
 
 
 def tone_down_values(values, max_value):
@@ -59,10 +60,10 @@ class BarVisualizer:
 
     def get_data(self):
         t = pygame.time.get_ticks() / 1000.0
-        start_index = max(0, int(SAMPLE_RATE * (t - shared.dt)))
+        start_index = max(0, int(SAMPLE_RATE * (t - 0.5)))
         end_index = min(
             self.arr_size,
-            int(SAMPLE_RATE * (t + shared.dt)),
+            int(SAMPLE_RATE * (t + 0.5)),
         )
 
         self.data = np.abs(self.arr[start_index:end_index])
