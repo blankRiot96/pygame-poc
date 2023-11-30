@@ -9,7 +9,6 @@ class Square:
         self.surf.set_alpha(150)
         self.pos = pygame.Vector2(250, 250)
         self.speed = 200
-        self.once = True
 
     def update(self):
         x, y = 0, 0
@@ -26,6 +25,3 @@ class Square:
 
     def render(self):
         shared.win.blit(self.surf, self.pos)
-        if self.once:
-            pygame.image.save(shared.win, "output.png")
-            self.once = False
