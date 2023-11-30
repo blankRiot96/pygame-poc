@@ -7,10 +7,12 @@
 
 ## PoCs
 
-### Sparks
+### [Bar visualizer](https://github.com/blankRiot96/pygame-poc/tree/main/poc/sparks)
 
 <img height=300 src="https://raw.githubusercontent.com/blankRiot96/pygame-poc/main/screenshots/sparks.gif">
 
-### Shaders
+### [Bar visualizer](https://github.com/blankRiot96/pygame-poc/tree/main/poc/shaders)
 
 <img height=300 src="https://raw.githubusercontent.com/blankRiot96/pygame-poc/main/screenshots/shaders.gif">
+
+### [Bar visualizer](https://github.com/blankRiot96/pygame-poc/tree/main/poc/bar-viz)
