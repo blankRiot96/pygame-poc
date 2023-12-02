@@ -1,10 +1,14 @@
 import pygame
-import shared
+from src import shared
+from src.manager import EffectManager
 
 pygame.init()
 shared.win = pygame.display.set_mode((800, 450))
+shared.dt = 0.0
 clock = pygame.Clock()
 
+
+effect = EffectManager()
 
 while True:
     shared.dt = clock.tick(60) / 1000
@@ -13,6 +17,8 @@ while True:
         if event.type == pygame.QUIT:
             raise SystemExit
     pygame.display.set_caption(f"{clock.get_fps():.0f}")
+    effect.update()
 
     shared.win.fill("black")
+    effect.render()
     pygame.display.update()
