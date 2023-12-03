@@ -4,21 +4,22 @@ import random
 
 import pygame
 from src import shared
-from src.text_effects import RotateAndOpen, TextEffect
+from src.text_effects import EffectChain, Open, Reveal, Rotate
 from src.utils import render_at
 
 
 class EffectManager:
-    EFFECTS: list[TextEffect] = [
-        RotateAndOpen,
-    ]
-
     def __init__(self) -> None:
         self.get_effect()
 
     def get_effect(self) -> None:
-        self.current_effect: TextEffect = random.choice(EffectManager.EFFECTS)(
-            text="Hiding in the Dark", font=pygame.Font("neofont.ttf", 48), seconds=2.0
+        effects = [Open, Rotate]
+        self.current_effect = EffectChain(
+            effects,
+            text="Hiding in the Dark",
+            font=pygame.font.Font("neofont.ttf", 48),
+            seconds=2.0,
+            curve=3,
         )
 
     def update(self):
