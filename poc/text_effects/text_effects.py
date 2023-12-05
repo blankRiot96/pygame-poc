@@ -2,8 +2,8 @@ import abc
 import typing as t
 
 import pygame
-from src import shared
-from src.utils import render_at
+
+from .utils import render_at
 
 
 class TextEffect(abc.ABC):
@@ -21,8 +21,8 @@ class TextEffect(abc.ABC):
         self.max_seconds = self.seconds
         self.get_time_ratio()
 
-    def get_time_ratio(self) -> None:
-        self.seconds -= shared.dt
+    def get_time_ratio(self, dt) -> None:
+        self.seconds -= dt
         self.time_ratio = (self.seconds / self.max_seconds) ** self.curve
 
     def update(self) -> None:
@@ -127,7 +127,7 @@ class EffectChain:
         for effect in self.effects:
             effect.update()
 
-    def get_surf(self):
+    def get_surf(self) -> pygame.Surface:
         surf = self.effects[0].get_inst_surf()
         for effect in self.effects[1:]:
             surf = effect.get_surf(surf)

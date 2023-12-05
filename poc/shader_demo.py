@@ -1,7 +1,6 @@
 import pygame
-from src import shared
-from src.shader import Shader
-from src.square import Square
+from shaders.shader import Shader
+from shaders.square import Square
 
 
 class Core:
@@ -17,29 +16,28 @@ class Core:
         pygame.display.set_mode(
             Core.WIN_SIZE, pygame.OPENGL | pygame.DOUBLEBUF | pygame.RESIZABLE
         )
-        shared.win = pygame.Surface(Core.WIN_SIZE, pygame.SRCALPHA)
+        self.win = pygame.Surface(Core.WIN_SIZE, pygame.SRCALPHA)
         self.clock = pygame.Clock()
 
     def shader_init(self):
         self.shader = Shader(vert_shader_name="vert", frag_shader_name="frag")
         self.shader.safe_assign("res", Core.WIN_SIZE)
-
         self.display_shader = Shader(
             vert_shader_name="vert", frag_shader_name="display"
         )
 
     def traverse_events(self):
-        for event in shared.events:
+        for event in self.events:
             if event.type == pygame.QUIT:
                 raise SystemExit
             elif event.type == pygame.VIDEORESIZE:
                 self.shader.safe_assign("res", Core.WIN_SIZE)
 
     def update(self):
-        shared.win = pygame.Surface(Core.WIN_SIZE, pygame.SRCALPHA)
-        shared.dt = self.clock.tick(60) / 1000
-        shared.events = pygame.event.get()
-        shared.keys = pygame.key.get_pressed()
+        self.win = pygame.Surface(Core.WIN_SIZE, pygame.SRCALPHA)
+        self.dt = self.clock.tick(60) / 1000
+        self.events = pygame.event.get()
+        self.keys = pygame.key.get_pressed()
 
         self.traverse_events()
         pygame.display.set_caption(f"{self.clock.get_fps():.0f}")
@@ -49,7 +47,7 @@ class Core:
 
     def render(self):
         self.square.render()
-        self.display_shader.pass_surf_to_gl(shared.win)
+        self.display_shader.pass_surf_to_gl(self.win)
         self.shader.render()
         self.display_shader.render()
 

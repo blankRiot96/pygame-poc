@@ -1,8 +1,8 @@
 import numpy as np
 import pygame
-from src import shared
-from src.types_ import Size
-from src.utils import Time, render_at
+
+from .types_ import Size
+from .utils import Time, render_at
 
 SAMPLE_RATE = 48_000
 pygame.mixer.pre_init(frequency=SAMPLE_RATE)
@@ -91,7 +91,7 @@ class BarVisualizer:
             pygame.draw.rect(self.surf, self.get_bar_color(bar_height), r)
 
             if bar_height > 2:
-                self.bar_heights[i] -= 3.5
+                self.bar_heights[i] -= (bar_height / self.height) * 3.5
             else:
                 self.bar_heights[i] = 2
 
@@ -100,7 +100,7 @@ class BarVisualizer:
             self.get_data()
         self.create_surf()
 
-    def render(self, render_anchors: list[str], rotate_funcs: list[callable]):
+    def render(self, win, render_anchors: list[str], rotate_funcs: list[callable]):
         for render_anchor, rotate_func in zip(render_anchors, rotate_funcs):
             surf = rotate_func(self.surf)
-            render_at(shared.win, surf, render_anchor)
+            render_at(win, surf, render_anchor)

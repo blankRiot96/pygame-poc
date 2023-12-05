@@ -7,7 +7,7 @@ import pygame
 
 
 def load_shader(name: str) -> str:
-    with open(f"shaders/{name}.glsl") as f:
+    with open(f"shaders/shaders/{name}.glsl") as f:
         shader = f.read()
 
     return shader
@@ -56,7 +56,7 @@ class Shader:
         self.safe_assign("tex", self.tex_pos)
 
     def load_quad(self):
-        with open("shaders/quad.json") as f:
+        with open("shaders/shaders/quad.json") as f:
             quad = json.load(f)
 
         self.quad_buffer = self.ctx.buffer(data=array("f", quad))
