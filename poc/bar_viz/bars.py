@@ -1,5 +1,6 @@
 import numpy as np
 import pygame
+import shared
 
 from .types_ import Size
 from .utils import Time, render_at
@@ -100,7 +101,7 @@ class BarVisualizer:
             self.get_data()
         self.create_surf()
 
-    def render(self, win, render_anchors: list[str], rotate_funcs: list[callable]):
+    def render(self, render_anchors: list[str], rotate_funcs: list[callable]):
         for render_anchor, rotate_func in zip(render_anchors, rotate_funcs):
             surf = rotate_func(self.surf)
-            render_at(win, surf, render_anchor)
+            render_at(shared.win, surf, render_anchor)

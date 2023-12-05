@@ -2,6 +2,7 @@ import math
 import random
 
 import pygame
+import shared
 
 from .types_ import ColorValue, Pos
 
@@ -9,16 +10,16 @@ RIGHT_ANGLE = math.pi / 2
 COLOR = (200, 200, 170)
 
 
-def entities_updater(entities: list, *args) -> None:
+def entities_updater(entities: list) -> None:
     for entity in entities[:]:
-        entity.update(*args)
+        entity.update()
         if not entity.alive:
             entities.remove(entity)
 
 
-def entities_renderer(entities: list, *args) -> None:
+def entities_renderer(entities: list) -> None:
     for entity in entities:
-        entity.draw(*args)
+        entity.draw()
 
 
 class Particle:
@@ -89,12 +90,12 @@ class Particle:
             return
         self.alive = False
 
-    def update(self, dt):
+    def update(self):
         """(kinematics)
         s = ut + (1/2)a(t^2)
         """
 
-        self.acc_dt += dt
+        self.acc_dt += shared.dt
         self.s1 = (self.initial_velocity * self.acc_dt) + (
             0.5 * self.acceleration * (self.acc_dt**2)
         )
@@ -107,8 +108,8 @@ class Particle:
 
         self.s2 = self.s1
 
-    def draw(self, win):
-        pygame.draw.polygon(win, self.color, self.points)
+    def draw(self):
+        pygame.draw.polygon(shared.win, self.color, self.points)
 
 
 class Spark:
@@ -119,12 +120,12 @@ class Spark:
         self.center = pygame.mouse.get_pos()
         self.alive = True
 
-    def update(self, dt):
-        entities_updater(self.particles, dt)
+    def update(self):
+        entities_updater(self.particles)
         self.alive = bool(self.particles)
 
-    def draw(self, win):
-        entities_renderer(self.particles, win)
+    def draw(self):
+        entities_renderer(self.particles)
 
 
 class ShockWave:
@@ -147,18 +148,20 @@ class ShockWave:
         self.alive = True
         self.acc_dt = 0.0
 
-    def update(self, dt):
+    def update(self):
         self.alive = self.width > 0
-        self.acc_dt += dt
+        self.acc_dt += shared.dt
 
         time_ratio = self.acc_dt / self.duration
         self.radius = self.max_radius * time_ratio
         self.width = self.max_width * (1 - time_ratio)
 
-    def draw(self, win):
+    def draw(self):
         if int(self.width) <= 0:
             return
-        pygame.draw.circle(win, self.color, self.pos, self.radius, int(self.width))
+        pygame.draw.circle(
+            shared.win, self.color, self.pos, self.radius, int(self.width)
+        )
 
 
 class SparkSpawner:
@@ -177,16 +180,16 @@ class SparkSpawner:
             )
         )
 
-    def check_spawn(self, events):
-        for event in events:
+    def check_spawn(self):
+        for event in shared.events:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 self.spawn()
 
-    def update(self, events, dt):
-        self.check_spawn(events)
-        entities_updater(self.shockwaves, dt)
-        entities_updater(self.sparks, dt)
+    def update(self):
+        self.check_spawn()
+        entities_updater(self.shockwaves)
+        entities_updater(self.sparks)
 
-    def draw(self, win):
-        entities_renderer(self.shockwaves, win)
+    def draw(self):
+        entities_renderer(self.shockwaves)
         entities_renderer(self.sparks)

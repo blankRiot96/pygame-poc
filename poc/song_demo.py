@@ -1,15 +1,13 @@
 from functools import partial
 
 import pygame
-from bar_viz import shared
+import shared
 from bar_viz.bars import BarVisualizer
 from text_effects.subtitles import Subtitles
 from text_effects.text_effects import EffectChain, Open, Reveal, Rotate
 
 pygame.init()
-shared.win = pygame.display.set_mode(
-    pygame.display.get_desktop_sizes()[0], pygame.NOFRAME
-)
+shared.win = pygame.display.set_mode((1100, 630))
 shared.WRECT = shared.win.get_rect()
 
 shared.dt = 0.0
@@ -44,9 +42,9 @@ def top_right(surf):
 amv_font_1 = pygame.Font("assets/neofont.ttf", 48)
 amv_subs = {
     9.0: ([Reveal], "Have you ever fell apart", amv_font_1),
-    11.0: ([Reveal], "Tell me you know what its like", amv_font_1),
+    10.0: ([Reveal], "Tell me you know what its like", amv_font_1),
 }
-amv_subtitles = Subtitles(amv_subs)
+amv_subtitles = Subtitles(amv_subs, final_sub_offset=1.0)
 
 
 while True:
@@ -68,6 +66,6 @@ while True:
             partial(pygame.transform.rotate, angle=90),
         ],
     )
-    amv_subtitles.render(shared.win)
+    amv_subtitles.render()
 
     pygame.display.update()

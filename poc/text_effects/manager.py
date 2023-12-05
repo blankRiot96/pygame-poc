@@ -2,6 +2,7 @@
 
 
 import pygame
+import shared
 
 from .text_effects import EffectChain, Open, Reveal, Rotate
 from .utils import render_at
@@ -26,5 +27,5 @@ class EffectManager:
         if not self.current_effect.alive:
             self.get_effect()
 
-    def render(self, win):
-        render_at(win, self.current_effect.get_surf(), "center")
+    def render(self):
+        render_at(shared.win, self.current_effect.get_surf(), "center")

@@ -2,6 +2,7 @@ import abc
 import typing as t
 
 import pygame
+import shared
 
 from .utils import render_at
 
@@ -21,8 +22,8 @@ class TextEffect(abc.ABC):
         self.max_seconds = self.seconds
         self.get_time_ratio()
 
-    def get_time_ratio(self, dt) -> None:
-        self.seconds -= dt
+    def get_time_ratio(self) -> None:
+        self.seconds -= shared.dt
         self.time_ratio = (self.seconds / self.max_seconds) ** self.curve
 
     def update(self) -> None:

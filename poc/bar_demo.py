@@ -1,19 +1,22 @@
 from functools import partial
 
 import pygame
+import shared
 from bar_viz.bars import BarVisualizer
 
 pygame.init()
-win = pygame.display.set_mode(pygame.display.get_desktop_sizes()[0], pygame.NOFRAME)
-WRECT = win.get_rect()
+shared.win = pygame.display.set_mode(
+    pygame.display.get_desktop_sizes()[0], pygame.NOFRAME
+)
+shared.WRECT = shared.win.get_rect()
 
-dt = 0.0
+shared.dt = 0.0
 
-clock = pygame.Clock()
+shared.clock = pygame.Clock()
 
 
 viz = BarVisualizer(
-    size=(WRECT.height, 150),
+    size=(shared.WRECT.height, 150),
     bar_width=10,
     bar_space=5,
     update_cd=0.1,
@@ -37,16 +40,16 @@ def top_right(surf):
 
 
 while True:
-    dt = clock.tick(60) / 1000
-    events = pygame.event.get()
-    for event in events:
+    shared.dt = shared.clock.tick(60) / 1000
+    shared.events = pygame.event.get()
+    for event in shared.events:
         if event.type == pygame.QUIT:
             raise SystemExit
 
-    pygame.display.set_caption(f"{clock.get_fps():.0f}")
+    pygame.display.set_caption(f"{shared.clock.get_fps():.0f}")
     viz.update()
 
-    win.fill("black")
+    shared.win.fill("black")
     # viz.render(
     #     ["topleft", "bottomleft", "topright", "bottomright"],
     #     [
