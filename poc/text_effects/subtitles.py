@@ -18,12 +18,13 @@ class Subtitles:
         self.len_subs = len(self.subs)
 
     def is_song_over(self) -> bool:
-        return self.current_index >= self.len_subs
+        return self.current_index >= self.len_subs - 1
 
     def get_duration(self) -> float:
-        return min(self.next_time - self.current_time, 1.0)
+        return min(self.get_pseudo_next_time() - self.current_time, 1.0)
 
     def create_next_sub(self) -> None:
+        self.current_index += 1
         self.current_time, self.current_sub = self.subs[self.current_index]
         effects_queue, text, font = self.current_sub
         self.current_sub = EffectChain(
@@ -32,13 +33,15 @@ class Subtitles:
             font=font,
             seconds=self.get_duration(),
         )
-        self.current_index += 1
+
+    def get_pseudo_next_time(self) -> float:
+        try:
+            return self.subs[self.current_index + 1][0]
+        except IndexError:
+            return self.subs[-1][0] + self.final_sub_offset
 
     def calc_next_time(self) -> None:
-        try:
-            self.next_time = self.subs[self.current_index + 1][0]
-        except IndexError:
-            self.next_time = self.subs[-1][0] + self.final_sub_offset
+        self.next_time = self.get_pseudo_next_time()
 
     def get_next_subtitle(self):
         self.calc_next_time()

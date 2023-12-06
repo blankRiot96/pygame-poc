@@ -43,10 +43,10 @@ amv_font_1 = pygame.Font("assets/neofont.ttf", 16)
 amv_font_2 = pygame.Font("assets/neofont.ttf", 48)
 amv_subs = {
     # Intro
-    9.0: ([Reveal], "(Have you ever fell apart)", amv_font_1),
-    10.0: ([Reveal], "(Tell me you know what its like)", amv_font_1),
-    15.0: ([Reveal], "(Hiding in the dark)", amv_font_1),
-    16.0: ([Reveal], "(Searching for the light)", amv_font_1),
+    10.0: ([Reveal], "(Have you ever fell apart)", amv_font_1),
+    11.0: ([Reveal], "(Tell me you know what its like)", amv_font_1),
+    16.0: ([Reveal], "(Hiding in the dark)", amv_font_1),
+    17.0: ([Reveal], "(Searching for the light)", amv_font_1),
     #
     # Starting
     21.5: ([Open, Rotate], "Have you ever fell apart", amv_font_2),
