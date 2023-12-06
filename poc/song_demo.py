@@ -39,10 +39,24 @@ def top_right(surf):
     return surf
 
 
-amv_font_1 = pygame.Font("assets/neofont.ttf", 48)
+amv_font_1 = pygame.Font("assets/neofont.ttf", 16)
+amv_font_2 = pygame.Font("assets/neofont.ttf", 48)
 amv_subs = {
-    9.0: ([Reveal], "Have you ever fell apart", amv_font_1),
-    10.0: ([Reveal], "Tell me you know what its like", amv_font_1),
+    # Intro
+    9.0: ([Reveal], "(Have you ever fell apart)", amv_font_1),
+    10.0: ([Reveal], "(Tell me you know what its like)", amv_font_1),
+    15.0: ([Reveal], "(Hiding in the dark)", amv_font_1),
+    16.0: ([Reveal], "(Searching for the light)", amv_font_1),
+    #
+    # Starting
+    21.5: ([Open, Rotate], "Have you ever fell apart", amv_font_2),
+    22.6: ([Reveal], "Tell", amv_font_2),
+    22.7: ([Reveal], "Me", amv_font_2),
+    22.8: ([Reveal], "You", amv_font_2),
+    22.9: ([Reveal], "Know", amv_font_2),
+    23.0: ([Reveal], "What", amv_font_2),
+    23.1: ([Reveal], "Its", amv_font_2),
+    23.2: ([Reveal], "Like", amv_font_2),
 }
 amv_subtitles = Subtitles(amv_subs, final_sub_offset=1.0)
 

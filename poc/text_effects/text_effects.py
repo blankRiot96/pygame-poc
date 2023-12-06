@@ -67,7 +67,7 @@ class Open(TextEffect):
     def kyoto_sub(self, surf: pygame.Surface, rect: pygame.Rect) -> pygame.Surface:
         try:
             return surf.subsurface(rect).copy()
-        except ValueError:
+        except pygame.error:
             return surf
 
     def get_surf(self, surf: pygame.Surface) -> pygame.Surface:
@@ -120,6 +120,7 @@ class EffectChain:
         seconds: float,
         curve: int = 2,
     ) -> None:
+        self.text = text
         self.effects = [Effect(text, font, seconds, curve) for Effect in effect_queue]
         self.alive = True
 
