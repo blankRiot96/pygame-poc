@@ -26,12 +26,13 @@ class Subtitles:
     def create_next_sub(self) -> None:
         self.current_index += 1
         self.current_time, self.current_sub = self.subs[self.current_index]
-        effects_queue, text, font = self.current_sub
+        effects_queue, text, font, *color = self.current_sub
         self.current_sub = EffectChain(
             effect_queue=effects_queue,
             text=text,
             font=font,
             seconds=self.get_duration(),
+            color=color[0] if color else "white",
         )
 
     def get_pseudo_next_time(self) -> float:

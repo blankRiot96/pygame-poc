@@ -14,8 +14,7 @@ class SinWave:
 
     def val(self) -> float:
         self.rad += self.speed
-        if self.rad >= 2 * math.pi:
-            self.rad = 0
+        self.rad = self.rad % (2 * math.pi)
 
         return math.sin(self.rad)
 

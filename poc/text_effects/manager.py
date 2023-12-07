@@ -4,7 +4,7 @@
 import pygame
 import shared
 
-from .text_effects import EffectChain, Open, Reveal, Rotate
+from .text_effects import EffectChain, Expand, Open, Reveal, Rotate, Wiggle
 from .utils import render_at
 
 
@@ -13,7 +13,7 @@ class EffectManager:
         self.get_effect()
 
     def get_effect(self) -> None:
-        effects = [Open, Rotate]
+        effects = [Wiggle]
         self.current_effect = EffectChain(
             effects,
             text="Hiding in the Dark",
