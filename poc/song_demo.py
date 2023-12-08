@@ -15,29 +15,34 @@ shared.dt = 0.0
 shared.clock = pygame.Clock()
 
 
-viz = BarVisualizer(
-    size=(shared.WRECT.height, 150),
-    bar_width=10,
-    bar_space=5,
-    update_cd=0.1,
-)
-viz.set_song(pygame.mixer.Sound("assets/hiding-in-the-dark.mp3"))
-viz.play()
+# viz = BarVisualizer(
+#     size=(shared.WRECT.height, 150),
+#     bar_width=10,
+#     bar_space=5,
+#     update_cd=0.1,
+# )
+# viz.set_song(pygame.mixer.Sound("assets/hiding-in-the-dark.mp3"))
+# viz.play()
 
 
-def bottom_left(surf):
-    surf = pygame.transform.rotate(surf, angle=90)
-    surf = pygame.transform.flip(surf, True, False)
+# def bottom_left(surf):
+#     surf = pygame.transform.rotate(surf, angle=90)
+#     surf = pygame.transform.flip(surf, True, False)
 
-    return surf
+#     return surf
 
 
-def top_right(surf):
-    surf = pygame.transform.rotate(surf, angle=-90)
-    surf = pygame.transform.flip(surf, True, False)
+# def top_right(surf):
+#     surf = pygame.transform.rotate(surf, angle=-90)
+#     surf = pygame.transform.flip(surf, True, False)
 
-    return surf
+#     return surf
 
+
+DEBUG_START = 23
+
+pygame.mixer.music.load("assets/hiding-in-the-dark.mp3")
+pygame.mixer.music.play(start=DEBUG_START)
 
 amv_font_1 = pygame.Font("assets/neofont.ttf", 24)
 amv_font_2 = pygame.Font("assets/neofont.ttf", 48)
@@ -58,14 +63,14 @@ amv_subs = {
     23.1: ([Expand], "Its", amv_font_2),
     23.2: ([Expand], "Like", amv_font_2),
     # Verse 2
-    24.0: ([Wiggle], "Hiding In The Dark", amv_font_2),
+    24.0: ([Wiggle], "Hiding In The Dark[purple]", amv_font_2),
     25.1: ([Expand], "Always", amv_font_2),
     25.2: ([Expand], "Looking", amv_font_2),
     25.3: ([Expand], "For", amv_font_2),
     25.4: ([Expand], "The", amv_font_2),
     25.5: ([Expand], "Light", amv_font_2, "yellow"),
     # Verse 3
-    26.2: ([Reveal, Open], "I've Been Feeling So Alone", amv_font_2),
+    26.2: ([Reveal, Open], "I've Been Feeling So Alone[red]", amv_font_2),
     28.0: ([Expand], "I've", amv_font_2),
     28.1: ([Expand], "Been", amv_font_2),
     28.2: ([Expand], "Trapped", amv_font_2, "red"),
@@ -78,8 +83,10 @@ amv_subs = {
     30.6: ([Expand], "Been", amv_font_2),
     30.7: ([Expand], "Dying", amv_font_2),
     30.8: ([Expand], "Inside", amv_font_2),
+    # Verse 4
+    32.0: ([Reveal, Open], "I don't know where to start", amv_font_2),
 }
-amv_subtitles = Subtitles(amv_subs, final_sub_offset=1.0)
+amv_subtitles = Subtitles(amv_subs, final_sub_offset=1.0, start_offset=DEBUG_START)
 
 
 while True:
@@ -90,17 +97,17 @@ while True:
             raise SystemExit
 
     pygame.display.set_caption(f"{shared.clock.get_fps():.0f}")
-    viz.update()
+    # viz.update()
     amv_subtitles.update()
 
     shared.win.fill("black")
-    viz.render(
-        ["topleft", "topright"],
-        [
-            partial(pygame.transform.rotate, angle=-90),
-            partial(pygame.transform.rotate, angle=90),
-        ],
-    )
+    # viz.render(
+    #     ["topleft", "topright"],
+    #     [
+    #         partial(pygame.transform.rotate, angle=-90),
+    #         partial(pygame.transform.rotate, angle=90),
+    #     ],
+    # )
     amv_subtitles.render()
 
     pygame.display.update()

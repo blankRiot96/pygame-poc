@@ -17,17 +17,47 @@ class TextEffect(abc.ABC):
         color="white",
         curve: int = 2,
     ) -> None:
-        self.text = text
         self.font = font
         self.seconds = seconds
         self.curve = curve
         self.color = color
 
-        self.original_surf = self.font.render(self.text, True, self.color)
+        self.parse_text_colors(text)  # Assigns self.text and self.original_surf
         self.original_rect = self.original_surf.get_rect()
         self.alive = True
         self.max_seconds = self.seconds
         self.get_time_ratio()
+
+    def parse_text_colors(self, text: str) -> pygame.Surface:
+        uni_colored = self.font.render(text, True, self.color)
+        if text.find("[") == -1:
+            self.text = text
+            self.original_surf = uni_colored
+            return
+        final_surf = pygame.Surface(uni_colored.get_size(), pygame.SRCALPHA)
+        final_text = ""
+        acc_width = 0
+        words = text.split()
+        for i, word in enumerate(words):
+            color = self.color
+            filtered_text = word
+            if word.endswith("]"):
+                color = word[word.find("[") + 1 : word.find("]")]
+
+                filtered_text = word[: word.find("[")]
+            if i < len(words) - 1:
+                filtered_text += " "
+
+            final_text += filtered_text
+            word_surf = self.font.render(filtered_text, True, color)
+            final_surf.blit(word_surf, (acc_width, 0))
+            acc_width += word_surf.get_width()
+
+        self.text = final_text
+        wotato = final_surf.get_bounding_rect()
+        wotato.width = acc_width
+        self.original_surf = final_surf.subsurface(wotato).copy()
+        # self.original_surf = final_surf.copy()
 
     def get_time_ratio(self) -> None:
         self.seconds -= shared.dt
@@ -46,6 +76,18 @@ class TextEffect(abc.ABC):
         ...
 
 
+class Shake(TextEffect):
+    def __init__(
+        self,
+        text: str,
+        font: pygame.Font,
+        seconds: float,
+        color: str = "white",
+        curve: int = 2,
+    ) -> None:
+        ...
+
+
 class Wiggle(TextEffect):
     def __init__(
         self,
@@ -60,6 +102,7 @@ class Wiggle(TextEffect):
         self.offset_dir = True
         self.wave = SinWave(0.005)
         self.offset = 0
+        self.split_into_letters(self.original_surf)
 
     def kyoto_sub(
         self, surf: pygame.Surface, rect_data: tuple[int | float, ...]
@@ -82,8 +125,10 @@ class Wiggle(TextEffect):
             self.letters.append((acc_width, letter))
             acc_width += letter_width
 
-    def get_surf(self, surf):
-        self.split_into_letters(surf)
+    def get_surf(self, surf):  # noqa
+        # surf will not be used because Wiggle is the highest precedency
+        # and assumes it will always use `get_inst_surf` and hence
+        # the result of `surf` is precalculated using the original surface
         scalene = self.font.get_height() / 16
         offset = self.wave.val() * scalene
         final_surf = pygame.Surface(
@@ -91,6 +136,7 @@ class Wiggle(TextEffect):
             pygame.SRCALPHA,
         )
 
+        self.offset_dir = abs(self.offset_dir)
         for x, letter in self.letters:
             if self.offset_dir:
                 offset = (self.offset_dir - self.wave.val()) * scalene
@@ -102,9 +148,7 @@ class Wiggle(TextEffect):
             rect = pygame.FRect(x, 0, *letter.get_size())
             rect.centery = self.original_rect.centery + offset
             final_surf.blit(letter, rect)
-            # print(x)
 
-        # exit()
         return final_surf
 
 
@@ -202,6 +246,7 @@ class EffectChain:
     """Chains effects
 
     PRECEDENCY:
+    * Wiggle
     * Open, Reveal
     * Rotate
 

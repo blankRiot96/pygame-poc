@@ -8,14 +8,20 @@ from .utils import render_at
 
 
 class Subtitles:
-    def __init__(self, subs: dict[float, EffectChain], final_sub_offset: float) -> None:
+    def __init__(
+        self,
+        subs: dict[float, EffectChain],
+        final_sub_offset: float,
+        start_offset: float = 0.0,
+    ) -> None:
         self.subs = tuple(subs.items())
+        self.len_subs = len(self.subs)
+        self.final_sub_offset = final_sub_offset
+        self.start_offset = start_offset
         self.start = time.perf_counter()
         self.current_index = -1
         self.current_sub = None
         self.get_next_subtitle()
-        self.final_sub_offset = final_sub_offset
-        self.len_subs = len(self.subs)
 
     def is_song_over(self) -> bool:
         return self.current_index >= self.len_subs - 1
@@ -50,7 +56,7 @@ class Subtitles:
             self.create_next_sub()
 
     def is_sub_over(self):
-        return time.perf_counter() - self.start >= self.next_time
+        return (time.perf_counter() - self.start) + self.start_offset >= self.next_time
 
     def update(self):
         self.get_next_subtitle()
