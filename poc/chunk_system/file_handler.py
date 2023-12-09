@@ -22,12 +22,26 @@ class ChunkFilesHandler:
     def load_chunk_from_disk(self, path: Path) -> Chunk:
         """Loads a particular chunk from the disk"""
 
-        return pickle.load(path)
+        with open(path, "rb") as f:
+            return pickle.load(f)
+
+    def write_chunks_to_disk(self) -> None:
+        """Writes the saved chunkys to the disk"""
+
+        for chunk in tuple(self.saved_chunky.values())[0]:
+            if chunk.is_empty():
+                continue
+
+            chunk.write_to_disk()
 
     def get_chunk(self, chunk_pos: Cell) -> Chunk:
         possible_chunk_file_path = Path(f"assets/chunks/{chunk_pos}.dat")
         if possible_chunk_file_path.exists():
-            return self.load_chunk_from_disk(possible_chunk_file_path)
+            return Chunk.from_partial_data(
+                self.chunk_size,
+                chunk_pos,
+                self.load_chunk_from_disk(possible_chunk_file_path),
+            )
 
         return Chunk(self.chunk_size, chunk_pos)
 
@@ -46,8 +60,9 @@ class ChunkFilesHandler:
 
         args = (chunk_pos, horizontal_limit, vertical_limit)
         if self.saved_chunky.get(args) is not None:
-            print("LOADING SAME CHUNKS")
             return self.saved_chunky.get(args)
+        else:
+            self.saved_chunky.clear()
 
         chunks = []
         for x_offset in range(-horizontal_limit, horizontal_limit + 1):

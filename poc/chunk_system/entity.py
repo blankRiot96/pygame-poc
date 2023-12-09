@@ -16,5 +16,5 @@ class Entity:
     def update(self) -> None:
         ...
 
-    def render(self) -> None:
-        shared.win.blit(self.surf, self.rect)
+    def render(self, camera_offset: pygame.Vector2) -> None:
+        shared.win.blit(self.surf, self.rect.topleft - camera_offset)
