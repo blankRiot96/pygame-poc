@@ -39,7 +39,7 @@ shared.clock = pygame.Clock()
 #     return surf
 
 
-DEBUG_START = 23
+DEBUG_START = 8
 
 pygame.mixer.music.load("assets/hiding-in-the-dark.mp3")
 pygame.mixer.music.play(start=DEBUG_START)
@@ -84,7 +84,26 @@ amv_subs = {
     30.7: ([Expand], "Dying", amv_font_2),
     30.8: ([Expand], "Inside", amv_font_2),
     # Verse 4
-    32.0: ([Reveal, Open], "I don't know where to start", amv_font_2),
+    32.0: ([Reveal, Open], "I Don't Know Where To Start", amv_font_2),
+    33.4: ([Expand], "I", amv_font_2),
+    33.6: ([Expand], "Got", amv_font_2),
+    33.7: ([Expand], "Way", amv_font_2),
+    33.8: ([Expand], "Too", amv_font_2),
+    33.9: ([Expand], "Many", amv_font_2),
+    34.0: ([Expand], "Questions", amv_font_2, "red"),
+    35.0: ([Reveal, Expand], "Bleadin From My Heart", amv_font_2),
+    36.4: ([Expand], "I", amv_font_2),
+    36.5: ([Expand], "Can't", amv_font_2),
+    36.6: ([Expand], "Handle", amv_font_2),
+    36.7: ([Expand], "My", amv_font_2),
+    36.8: ([Expand], "Reflection", amv_font_2),
+    37.8: ([Reveal, Expand, Rotate], "Feel Like No[orange] One[red]", amv_font_2),
+    38.4: ([Expand, Reveal], "T O L D", amv_font_2, "cyan"),
+    38.8: ([Expand], "Me", amv_font_2),
+    38.9: ([Expand], "To", amv_font_2),
+    39.0: ([Expand], "Look", amv_font_2),
+    39.1: ([Expand], "In", amv_font_2),
+    39.2: ([Expand], "Myself", amv_font_2),
 }
 amv_subtitles = Subtitles(amv_subs, final_sub_offset=1.0, start_offset=DEBUG_START)
 

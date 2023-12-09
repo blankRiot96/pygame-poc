@@ -27,7 +27,7 @@ class Subtitles:
         return self.current_index >= self.len_subs - 1
 
     def get_duration(self) -> float:
-        return min(self.get_pseudo_next_time() - self.current_time, 1.0)
+        return min(self.get_pseudo_next_time() - self.current_time, 1.5)
 
     def create_next_sub(self) -> None:
         self.current_index += 1
