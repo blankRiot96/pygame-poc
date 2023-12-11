@@ -3,7 +3,7 @@ import pygame
 import shared
 
 from .chunks import Chunk
-from .common import CHUNK_TILES, TILE_SIDE, TILE_SIZE
+from .common import CHUNK_SIZE, CHUNK_TILES, TILE_SIDE, TILE_SIZE
 from .entity import Entity
 from .file_handler import ChunkFilesHandler
 from .types_ import Cell
@@ -14,12 +14,42 @@ class ChunkCreator:
 
     def __init__(self) -> None:
         self.file_handler = ChunkFilesHandler()
-        self.on_screen_chunks: dict[Cell, Chunk] = {}
         self.mx, self.my = 0, 0
         self.holding_to_create_entity = True
+        self.on_screen_chunks: dict[Cell, Chunk] = {}
+        self.prev_center_chunk = (-1, -1)
+        self._calc_center_chunk()
 
-    def _gen_center_chunk(self) -> None:
+    def load_files(self):
+        horizontal_limit = int(shared.WRECT.width / CHUNK_SIZE) + 1
+        vertical_limit = int(shared.WRECT.height / CHUNK_SIZE) + 1
+        self.on_screen_chunks: dict[Cell, Chunk] = {
+            chunk.chunk_pos: chunk
+            for chunk in self.file_handler.get_surrounding_chunks(
+                self.center_chunk,
+                horizontal_limit=horizontal_limit,
+                vertical_limit=vertical_limit,
+            )
+        }
+
+    def dump_files(self):
+        self.file_handler.write_chunks_to_disk(self.on_screen_chunks.values())
+
+    def on_change_center(self):
+        self.dump_files()
+        self.load_files()
+
+    def _calc_center_chunk(self) -> None:
         """Assigns `self.center_chunk` based on some camera calculations."""
+
+        centerx = ((shared.WRECT.width + shared.camera.x) / CHUNK_SIZE) / 2
+        centery = ((shared.WRECT.height + shared.camera.y) / CHUNK_SIZE) / 2
+
+        self.center_chunk = (int(centerx), int(centery))
+        if self.center_chunk != self.prev_center_chunk:
+            self.on_change_center()
+
+        self.prev_center_chunk = self.center_chunk
 
     def place_entity(self, entity: Entity):
         """Placing a entity to its respective chunk based on game coordinates"""
@@ -60,7 +90,6 @@ class ChunkCreator:
 
     def check_entity_exists(self, entity: Entity) -> bool:
         chunk = self._get_chunk(entity)
-
         return chunk.get_entity(entity.cell) is not None
 
     def on_switch(self) -> None:
@@ -84,8 +113,9 @@ class ChunkCreator:
         """Runs every tick of pygame"""
 
         self.update_chunks()
+        self._calc_center_chunk()
 
-        mx, my = shared.mouse_pos // TILE_SIDE
+        mx, my = (shared.mouse_pos + shared.camera) // TILE_SIDE
         self.mx, self.my = mx, my
         chunk_pos = (mx // CHUNK_TILES, my // CHUNK_TILES)
         entity_cell = (mx, my) - (pygame.Vector2(chunk_pos) * CHUNK_TILES)
@@ -100,12 +130,16 @@ class ChunkCreator:
         """Render chunks and entities"""
 
         for chunk in self.on_screen_chunks.values():
-            pygame.draw.rect(shared.win, "white", chunk.rect, width=2)
+            pygame.draw.rect(
+                shared.win, "white", chunk.rect.move(*-shared.camera), width=2
+            )
             for entity in chunk.cells.values():
                 entity.render()
 
         pygame.draw.rect(
             shared.win,
             ("red", "green")[self.holding_to_create_entity],
-            (self.mx * TILE_SIDE, self.my * TILE_SIDE, *TILE_SIZE),
+            pygame.Rect(self.mx * TILE_SIDE, self.my * TILE_SIDE, *TILE_SIZE).move(
+                *-shared.camera
+            ),
         )

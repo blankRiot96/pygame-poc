@@ -40,12 +40,11 @@ class ChunkFilesHandler:
         possible_chunk_file_path = Path(f"assets/chunks/{chunk_pos}.dat")
         if possible_chunk_file_path.exists():
             return Chunk.from_partial_data(
-                CHUNK_TILES,
                 chunk_pos,
                 self.load_chunk_from_disk(possible_chunk_file_path),
             )
 
-        return Chunk(CHUNK_TILES, chunk_pos)
+        return Chunk(chunk_pos)
 
     def get_surrounding_chunks(
         self, chunk_pos: Cell, horizontal_limit: int, vertical_limit: int

@@ -20,4 +20,4 @@ class Entity:
         ...
 
     def render(self) -> None:
-        shared.win.blit(self.surf, self.rect)
+        shared.win.blit(self.surf, self.rect.topleft - shared.camera)

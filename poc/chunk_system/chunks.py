@@ -40,7 +40,7 @@ class Chunk:
 
     def write_to_disk(self) -> None:
         serializable_chunk_data = {
-            cell: partial(Entity, self.get_entity_args(entity))
+            cell: partial(Entity, *self.get_entity_args(entity))
             for cell, entity in self.cells.items()
         }
 
