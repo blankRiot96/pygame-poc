@@ -22,7 +22,7 @@ creator = ChunkCreator()
 
 
 while True:
-    clock.tick(60)
+    shared.dt = clock.tick()
 
     shared.events = pygame.event.get()
     shared.mouse_pos = pygame.Vector2(pygame.mouse.get_pos())

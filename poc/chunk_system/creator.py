@@ -16,6 +16,7 @@ class ChunkCreator:
         self.file_handler = ChunkFilesHandler()
         self.on_screen_chunks: dict[Cell, Chunk] = {}
         self.mx, self.my = 0, 0
+        self.holding_to_create_entity = True
 
     def _gen_center_chunk(self) -> None:
         """Assigns `self.center_chunk` based on some camera calculations."""
@@ -44,20 +45,45 @@ class ChunkCreator:
         return chunk
 
     @staticmethod
-    def check_clicked() -> bool:
+    def check_right_click() -> bool:
         for event in shared.events:
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            # Check for right-click
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
                 return True
 
         return False
+
+    @staticmethod
+    def check_holding() -> bool:
+        # Check for left-click
+        return pygame.mouse.get_pressed()[0]
 
     def check_entity_exists(self, entity: Entity) -> bool:
         chunk = self._get_chunk(entity)
 
         return chunk.get_entity(entity.cell) is not None
 
+    def on_switch(self) -> None:
+        if ChunkCreator.check_right_click():
+            self.holding_to_create_entity = not self.holding_to_create_entity
+
+    def on_hold(self, entity_cell: Cell, chunk_pos: Cell) -> None:
+        if ChunkCreator.check_holding():
+            entity = Entity(entity_cell, chunk_pos)
+            if self.check_entity_exists(entity) and not self.holding_to_create_entity:
+                self.remove_entity(entity)
+            elif self.holding_to_create_entity:
+                self.place_entity(entity)
+
+    def update_chunks(self):
+        for chunk in tuple(self.on_screen_chunks.values()):
+            if chunk.is_empty():
+                self.on_screen_chunks.pop(chunk.chunk_pos)
+
     def update(self) -> None:
         """Runs every tick of pygame"""
+
+        self.update_chunks()
 
         mx, my = shared.mouse_pos // TILE_SIDE
         self.mx, self.my = mx, my
@@ -67,23 +93,19 @@ class ChunkCreator:
         chunk_pos = (int(chunk_pos[0]), int(chunk_pos[1]))
         entity_cell = (int(entity_cell[0]), int(entity_cell[1]))
 
-        if ChunkCreator.check_clicked():
-            entity = Entity(entity_cell, chunk_pos)
-            if self.check_entity_exists(entity):
-                self.remove_entity(entity)
-            else:
-                self.place_entity(entity)
+        self.on_switch()
+        self.on_hold(entity_cell, chunk_pos)
 
     def render(self) -> None:
         """Render chunks and entities"""
 
         for chunk in self.on_screen_chunks.values():
-            pygame.draw.rect(shared.win, "red", chunk.rect, width=2)
+            pygame.draw.rect(shared.win, "white", chunk.rect, width=2)
             for entity in chunk.cells.values():
                 entity.render()
 
         pygame.draw.rect(
             shared.win,
-            "orange",
+            ("red", "green")[self.holding_to_create_entity],
             (self.mx * TILE_SIDE, self.my * TILE_SIDE, *TILE_SIZE),
         )

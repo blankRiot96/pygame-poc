@@ -13,7 +13,7 @@ class Entity:
         ## Setting it to its chunk
         self.pos += pygame.Vector2(self.chunk_pos) * CHUNK_SIZE
         self.surf = pygame.Surface(TILE_SIZE)
-        self.surf.fill("red")
+        self.surf.fill("white")
         self.rect = self.surf.get_rect(topleft=self.pos)
 
     def update(self) -> None:
