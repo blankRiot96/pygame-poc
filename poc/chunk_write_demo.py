@@ -7,13 +7,13 @@ from chunk_system.common import CHUNK_SIZE
 from chunk_system.creator import ChunkCreator
 
 ## Clearing assets/chunks directory
-## ****TODO****: FIX LOADING OF CHUNKS!!
 for dir in Path("assets/chunks").iterdir():
     os.remove(dir)
 
 pygame.init()
 shared.win = pygame.display.set_mode((CHUNK_SIZE * 6, CHUNK_SIZE * 4))
 shared.WRECT = shared.win.get_rect()
+true_cam = pygame.Vector2()
 shared.camera = pygame.Vector2()
 cam_speed = 400
 
@@ -38,16 +38,18 @@ while True:
             raise SystemExit
 
     if shared.keys[pygame.K_a]:
-        shared.camera.x -= cam_speed * shared.dt
+        true_cam.x -= cam_speed * shared.dt
 
     if shared.keys[pygame.K_w]:
-        shared.camera.y -= cam_speed * shared.dt
+        true_cam.y -= cam_speed * shared.dt
 
     if shared.keys[pygame.K_s]:
-        shared.camera.y += cam_speed * shared.dt
+        true_cam.y += cam_speed * shared.dt
 
     if shared.keys[pygame.K_d]:
-        shared.camera.x += cam_speed * shared.dt
+        true_cam.x += cam_speed * shared.dt
+
+    shared.camera = true_cam / scaling_factor
 
     creator.update()
     shared.win.fill("black")

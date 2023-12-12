@@ -1,4 +1,6 @@
 """File for creation of chunks. Sort of PoC specific"""
+import math
+
 import pygame
 import shared
 
@@ -20,9 +22,22 @@ class ChunkCreator:
         self.prev_center_chunk = (-1, -1)
         self._calc_center_chunk()
 
+    @staticmethod
+    def negative_ceil(x: int | float) -> int:
+        if x > 0:
+            return math.ceil(x + 1)
+
+        return -math.ceil(abs(x) + 1)
+
     def load_files(self):
-        horizontal_limit = int(shared.WRECT.width / CHUNK_SIZE) + 1
-        vertical_limit = int(shared.WRECT.height / CHUNK_SIZE) + 1
+        horizontal_limit = ChunkCreator.negative_ceil(
+            (shared.WRECT.width / CHUNK_SIZE) / 2
+        )
+        vertical_limit = ChunkCreator.negative_ceil(
+            (shared.WRECT.height / CHUNK_SIZE) / 2
+        )
+
+        # horizontal_limit, vertical_limit = self.center_chunk
         self.on_screen_chunks: dict[Cell, Chunk] = {
             chunk.chunk_pos: chunk
             for chunk in self.file_handler.get_surrounding_chunks(
@@ -42,8 +57,8 @@ class ChunkCreator:
     def _calc_center_chunk(self) -> None:
         """Assigns `self.center_chunk` based on some camera calculations."""
 
-        centerx = ((shared.WRECT.width + shared.camera.x) / CHUNK_SIZE) / 2
-        centery = ((shared.WRECT.height + shared.camera.y) / CHUNK_SIZE) / 2
+        centerx = ((shared.WRECT.width / 2) + shared.camera.x) / CHUNK_SIZE
+        centery = ((shared.WRECT.height / 2) + shared.camera.y) / CHUNK_SIZE
 
         self.center_chunk = (int(centerx), int(centery))
         if self.center_chunk != self.prev_center_chunk:
@@ -112,8 +127,8 @@ class ChunkCreator:
     def update(self) -> None:
         """Runs every tick of pygame"""
 
-        self.update_chunks()
         self._calc_center_chunk()
+        self.update_chunks()
 
         mx, my = (shared.mouse_pos + shared.camera) // TILE_SIDE
         self.mx, self.my = mx, my
@@ -130,8 +145,10 @@ class ChunkCreator:
         """Render chunks and entities"""
 
         for chunk in self.on_screen_chunks.values():
+            color = ("white", "yellow")[chunk.chunk_pos == self.center_chunk]
+            width = (2, 5)[chunk.chunk_pos == self.center_chunk]
             pygame.draw.rect(
-                shared.win, "white", chunk.rect.move(*-shared.camera), width=2
+                shared.win, color, chunk.rect.move(*-shared.camera), width=width
             )
             for entity in chunk.cells.values():
                 entity.render()
