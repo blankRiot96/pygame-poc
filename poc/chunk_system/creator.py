@@ -1,5 +1,7 @@
 """File for creation of chunks. Sort of PoC specific"""
 import math
+import os
+import pathlib
 
 import pygame
 import shared
@@ -119,9 +121,15 @@ class ChunkCreator:
             elif self.holding_to_create_entity:
                 self.place_entity(entity)
 
+    def remove_chunk_from_disk(self, chunk: Chunk) -> None:
+        file_path = pathlib.Path(f"assets/chunks/{chunk.chunk_pos}.dat")
+        if file_path.exists():
+            os.remove(f"assets/chunks/{chunk.chunk_pos}.dat")
+
     def update_chunks(self):
         for chunk in tuple(self.on_screen_chunks.values()):
             if chunk.is_empty():
+                self.remove_chunk_from_disk(chunk)
                 self.on_screen_chunks.pop(chunk.chunk_pos)
 
     def update(self) -> None:

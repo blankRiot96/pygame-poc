@@ -7,8 +7,8 @@ from chunk_system.common import CHUNK_SIZE
 from chunk_system.creator import ChunkCreator
 
 ## Clearing assets/chunks directory
-for dir in Path("assets/chunks").iterdir():
-    os.remove(dir)
+# for dir in Path("assets/chunks").iterdir():
+#     os.remove(dir)
 
 pygame.init()
 shared.win = pygame.display.set_mode((CHUNK_SIZE * 6, CHUNK_SIZE * 4))
@@ -65,7 +65,7 @@ while True:
         font.render(
             f"No. of chunks LOADED: {len(creator.on_screen_chunks)}", True, "white"
         ),
-        (copium.get_width(), 100),
+        (copium.get_width() + 20, 100),
     )
 
     pygame.display.update()

@@ -3,7 +3,6 @@ import typing as t
 from pathlib import Path
 
 from .chunks import Chunk
-from .common import CHUNK_TILES
 from .types_ import Cell
 
 # Arg types for the get_surrounding_chunks method
