@@ -2,6 +2,7 @@
 .vscode/
 test.py
 *.exe
+*.dat
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
