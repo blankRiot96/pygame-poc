@@ -15,7 +15,7 @@
 
 <img height=300 src="https://raw.githubusercontent.com/blankRiot96/pygame-poc/main/screenshots/shaders.gif">
 
-### [Music Visualizer](https://github.com/blankRiot96/pygame-poc/tree/main/poc/bar_demo.py)
+### [Music Visualizer](https://github.com/blankRiot96/pygame-poc/tree/main/poc/song_demo.py)
 
 https://github.com/blankRiot96/pygame-poc/assets/77634274/ea9bcec0-e500-48e1-8895-2173f45ea524
 
