@@ -15,31 +15,31 @@ shared.dt = 0.0
 shared.clock = pygame.Clock()
 
 
-# viz = BarVisualizer(
-#     size=(shared.WRECT.height, 150),
-#     bar_width=10,
-#     bar_space=5,
-#     update_cd=0.1,
-# )
-# viz.set_song(pygame.mixer.Sound("assets/hiding-in-the-dark.mp3"))
-# viz.play()
+viz = BarVisualizer(
+    size=(shared.WRECT.height, 150),
+    bar_width=10,
+    bar_space=5,
+    update_cd=0.1,
+)
+viz.set_song(pygame.mixer.Sound("assets/hiding-in-the-dark.mp3"))
+viz.play()
 
 
-# def bottom_left(surf):
-#     surf = pygame.transform.rotate(surf, angle=90)
-#     surf = pygame.transform.flip(surf, True, False)
+def bottom_left(surf):
+    surf = pygame.transform.rotate(surf, angle=90)
+    surf = pygame.transform.flip(surf, True, False)
 
-#     return surf
-
-
-# def top_right(surf):
-#     surf = pygame.transform.rotate(surf, angle=-90)
-#     surf = pygame.transform.flip(surf, True, False)
-
-#     return surf
+    return surf
 
 
-DEBUG_START = 8
+def top_right(surf):
+    surf = pygame.transform.rotate(surf, angle=-90)
+    surf = pygame.transform.flip(surf, True, False)
+
+    return surf
+
+
+DEBUG_START = 0.0
 
 pygame.mixer.music.load("assets/hiding-in-the-dark.mp3")
 pygame.mixer.music.play(start=DEBUG_START)
@@ -116,17 +116,17 @@ while True:
             raise SystemExit
 
     pygame.display.set_caption(f"{shared.clock.get_fps():.0f}")
-    # viz.update()
+    viz.update()
     amv_subtitles.update()
 
     shared.win.fill("black")
-    # viz.render(
-    #     ["topleft", "topright"],
-    #     [
-    #         partial(pygame.transform.rotate, angle=-90),
-    #         partial(pygame.transform.rotate, angle=90),
-    #     ],
-    # )
+    viz.render(
+        ["topleft", "topright"],
+        [
+            partial(pygame.transform.rotate, angle=-90),
+            partial(pygame.transform.rotate, angle=90),
+        ],
+    )
     amv_subtitles.render()
 
     pygame.display.update()
