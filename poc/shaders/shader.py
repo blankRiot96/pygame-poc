@@ -18,12 +18,14 @@ class Shader:
 
     textures_formed = 0
 
-    def __init__(self, vert_shader_name: str, frag_shader_name: str) -> None:
+    def __init__(
+        self, vert_shader_name: str, frag_shader_name: str, surf_size: tuple[int, int]
+    ) -> None:
         self.load_ctx()
         self.load_quad()
         self.load_program(vert_shader_name, frag_shader_name)
         self.load_render_obj()
-        self.tex: moderngl.Texture | None = None
+        self.build_tex(surf_size)
         self.tex_pos: int = 0
 
     def load_ctx(self):
@@ -32,27 +34,19 @@ class Shader:
 
         self.ctx.blend_func = moderngl.SRC_ALPHA, moderngl.ONE_MINUS_SRC_ALPHA
 
-    def get_tex(self, surf: pygame.Surface) -> moderngl.Texture:
-        if self.tex is not None:
-            return self.tex
-
-        tex = self.ctx.texture(surf.get_size(), 4)
-        tex.filter = (moderngl.NEAREST, moderngl.NEAREST)
-        tex.swizzle = "BGRA"
+    def build_tex(self, surf_size: tuple[int, int]) -> moderngl.Texture:
+        self.tex = self.ctx.texture(surf_size, 4)
+        self.tex.filter = (moderngl.NEAREST, moderngl.NEAREST)
+        self.tex.swizzle = "BGRA"
         self.tex_pos = Shader.textures_formed
         Shader.textures_formed += 1
-
-        return tex
 
     def pass_surf_to_gl(self, surf: t.Optional[pygame.Surface]):
         if surf is None:
             return
 
-        self.tex = self.get_tex(surf)
         self.tex.write(surf.get_view("1"))
-        self.tex.build_mipmaps()
         self.tex.use(self.tex_pos)
-
         self.safe_assign("tex", self.tex_pos)
 
     def load_quad(self):

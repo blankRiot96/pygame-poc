@@ -39,7 +39,9 @@ class Core:
         if not SHADERS:
             return
         self.display_shader = Shader(
-            vert_shader_name="vert", frag_shader_name="display"
+            vert_shader_name="vert",
+            frag_shader_name="display",
+            surf_size=shared.WRECT.size,
         )
 
     def end(self) -> None:
