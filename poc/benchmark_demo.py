@@ -8,7 +8,7 @@ import pygame
 import shared
 from shaders.shader import Shader
 
-SHADERS = False
+SHADERS = True
 RUN_TIME_SECONDS = 5.0
 
 
