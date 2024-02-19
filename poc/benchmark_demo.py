@@ -8,7 +8,7 @@ import pygame
 import shared
 from shaders.shader import Shader
 
-SHADERS = True
+SHADERS = False
 RUN_TIME_SECONDS = 5.0
 
 
@@ -21,6 +21,7 @@ class Core:
         self.image = pygame.image.load("assets/images/naruto.jpg").convert()
         self.font = pygame.Font(None, 32)
         self.fps_note: list[float] = []
+        self.dt_note: list[float] = []
         self.start_time = time.perf_counter()
 
     def win_init(self):
@@ -56,6 +57,9 @@ class Core:
                 reset=colorama.Fore.RESET,
             )
         )
+        print(
+            f"AVERAGE TIME BETWEEN FRAMES WAS {colorama.Fore.BLUE}{sum(self.dt_note) / len(self.dt_note):.2f}ms{colorama.Fore.RESET}"
+        )
         raise SystemExit
 
     def traverse_events(self):
@@ -64,7 +68,8 @@ class Core:
                 self.end()
 
     def update(self):
-        shared.dt = self.clock.tick() / 1000
+        shared.dt = self.clock.tick()
+        self.dt_note.append(shared.dt)
         shared.events = pygame.event.get()
         shared.keys = pygame.key.get_pressed()
 

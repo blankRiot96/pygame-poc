@@ -39,6 +39,7 @@ class Shader:
         self.tex.filter = (moderngl.NEAREST, moderngl.NEAREST)
         self.tex.swizzle = "BGRA"
         self.tex_pos = Shader.textures_formed
+        self.tex.build_mipmaps()
         Shader.textures_formed += 1
 
     def pass_surf_to_gl(self, surf: t.Optional[pygame.Surface]):
@@ -77,6 +78,6 @@ class Shader:
             self.safe_assign(key, value)
 
     def render(self):
+        self.ctx.clear()
         self.render_obj.render(mode=moderngl.TRIANGLE_STRIP)
-        # if self.tex is not None:
-        #     self.tex.release()
+        # self.tex.release()
